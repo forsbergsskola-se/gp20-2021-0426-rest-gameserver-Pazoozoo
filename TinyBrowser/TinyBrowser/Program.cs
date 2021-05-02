@@ -58,4 +58,19 @@ public class Program {
 
         var titleText = FindTextBetweenTags(response, "<title>", "</title>");
     }
+    
+    static IEnumerable<string> GetTextBetweenCharsFromString(string text, string start, string end) {
+        int currentIndex = 0;
+        while (true) {
+            var startIndex = text.IndexOf(start, currentIndex);
+            if (startIndex == -1)
+                yield break;
+            var endIndex = text.IndexOf(end, startIndex);
+            if (endIndex == -1)
+                yield break;
+
+            yield return text[(startIndex+1)..endIndex];
+            currentIndex = endIndex;
+        }
+    }
 }
