@@ -74,3 +74,10 @@ public class Program {
         }
     }
 }
+
+// Extension Method
+public static class StringExtensions {
+    public static string FindTextBetweenTags(this string original, string start, string end) {
+        throw new NotImplementedException();
+    }
+}
