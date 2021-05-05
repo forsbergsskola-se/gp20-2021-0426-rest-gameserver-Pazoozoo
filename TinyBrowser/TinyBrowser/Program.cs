@@ -42,16 +42,15 @@ namespace TinyBrowser {
             // Console.WriteLine("response: " + response);
 
             var hrefLinks = GetTextBetweenStringsFromString(response, "<a href=\"", "\">");
-            var hrefTitles = GetTextBetweenStringsFromString(response, "<a href=\"", "</a>");
-            var hrefList = hrefLinks.ToList();
+            var hrefLinkList = hrefLinks.ToList();
+            var hrefDescriptionList = new List<string>();
 
-            for (var i = 0; i < hrefList.Count; i++) {
-                Console.WriteLine($"{i}: {hrefList[i]}");
+            for (var i = 0; i < hrefLinkList.Count; i++) {
+                var description = GetTextBetweenStringsFromString(response, hrefLinkList[i] + "\">", "</a>");
+                hrefDescriptionList.AddRange(description);
+                
+                Console.WriteLine($"{i}: {hrefDescriptionList[i]} ({hrefLinkList[i]})");
             }
-            
-            // foreach (var title in hrefTitles) {
-            //     Console.WriteLine(title);
-            // }
         }
         
         static string FindTextBetweenTags(string original, string tag) {
