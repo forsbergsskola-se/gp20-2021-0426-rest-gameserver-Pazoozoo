@@ -38,6 +38,14 @@ namespace TinyBrowser {
 
             var titleText = FindTextBetweenTags(response, "title");
             Console.WriteLine("Title: " + titleText);
+            Console.WriteLine("response: " + response);
+
+            var hrefLinks = GetTextBetweenCharsFromString(response, "href=\"", "\">", 6);
+                
+            foreach (var link in hrefLinks) {
+                Console.WriteLine(link);
+            }
+            
         }
         
         static string FindTextBetweenTags(string original, string tag) {
@@ -58,7 +66,7 @@ namespace TinyBrowser {
             return result;
         }
     
-        static IEnumerable<string> GetTextBetweenCharsFromString(string text, string start, string end) {
+        static IEnumerable<string> GetTextBetweenCharsFromString(string text, string start, string end, int startIndexOffset = 1) {
             int currentIndex = 0;
             while (true) {
                 var startIndex = text.IndexOf(start, currentIndex);
@@ -68,7 +76,7 @@ namespace TinyBrowser {
                 if (endIndex == -1)
                     yield break;
 
-                yield return text[(startIndex+1)..endIndex];
+                yield return text[(startIndex + startIndexOffset)..endIndex];
                 currentIndex = endIndex;
             }
         }
