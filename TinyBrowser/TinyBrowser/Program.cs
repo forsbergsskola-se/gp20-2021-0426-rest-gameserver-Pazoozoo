@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
@@ -38,14 +39,19 @@ namespace TinyBrowser {
 
             var titleText = FindTextBetweenTags(response, "title");
             Console.WriteLine("Title: " + titleText);
-            Console.WriteLine("response: " + response);
+            // Console.WriteLine("response: " + response);
 
-            var hrefLinks = GetTextBetweenCharsFromString(response, "href=\"", "\">", 6);
-                
-            foreach (var link in hrefLinks) {
-                Console.WriteLine(link);
+            var hrefLinks = GetTextBetweenStringsFromString(response, "<a href=\"", "\">");
+            var hrefTitles = GetTextBetweenStringsFromString(response, "<a href=\"", "</a>");
+            var hrefList = hrefLinks.ToList();
+
+            for (var i = 0; i < hrefList.Count; i++) {
+                Console.WriteLine($"{i}: {hrefList[i]}");
             }
             
+            // foreach (var title in hrefTitles) {
+            //     Console.WriteLine(title);
+            // }
         }
         
         static string FindTextBetweenTags(string original, string tag) {
@@ -66,7 +72,7 @@ namespace TinyBrowser {
             return result;
         }
     
-        static IEnumerable<string> GetTextBetweenCharsFromString(string text, string start, string end, int startIndexOffset = 1) {
+        static IEnumerable<string> GetTextBetweenStringsFromString(string text, string start, string end) {
             int currentIndex = 0;
             while (true) {
                 var startIndex = text.IndexOf(start, currentIndex);
@@ -76,7 +82,7 @@ namespace TinyBrowser {
                 if (endIndex == -1)
                     yield break;
 
-                yield return text[(startIndex + startIndexOffset)..endIndex];
+                yield return text[(startIndex + start.Length)..endIndex];
                 currentIndex = endIndex;
             }
         }
