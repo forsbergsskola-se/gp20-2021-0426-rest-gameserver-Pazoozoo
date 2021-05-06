@@ -8,7 +8,7 @@ namespace LameScooter
         {
             Console.WriteLine(args[0]);
 
-            ILameScooterRental rental = null; // Replace with new XXX() later.
+            ILameScooterRental rental = new OfflineLameScooterRental("scooters.json"); // Replace with new XXX() later.
 
             // var count = await rental.GetScooterCountInStation(args[0]); 
             

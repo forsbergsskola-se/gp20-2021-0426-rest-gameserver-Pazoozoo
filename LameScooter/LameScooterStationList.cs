@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace LameScooter {
@@ -16,5 +17,9 @@ namespace LameScooter {
         public string State { get; set; }
         public List<string> Networks { get; set; }
         public bool RealTimeData { get; set; }
+
+        public override string ToString() {
+            return Name;
+        }
     }
 }
