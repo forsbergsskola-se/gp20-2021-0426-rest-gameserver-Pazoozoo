@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace LameScooter {
     public class OfflineLameScooterRental : ILameScooterRental {
+        List<LameScooterStationList> _scooterList;
 
         public OfflineLameScooterRental(string uri) {
-            Console.WriteLine($"Loading from path: {uri}");
             if (!File.Exists(uri)) {
                 Console.Write($"File not found in path: {uri}");
                 return;
@@ -19,14 +19,17 @@ namespace LameScooter {
             };
 
             var jsonString = File.ReadAllText(uri);
-            var scooterList = JsonSerializer.Deserialize<List<LameScooterStationList>>(jsonString, options);
-
-            foreach (var scooter in scooterList) {
-                Console.WriteLine(scooter);
-            }
+            _scooterList = JsonSerializer.Deserialize<List<LameScooterStationList>>(jsonString, options);
         }
+        
         public Task<int> GetScooterCountInStation(string stationName) {
-            throw new NotImplementedException();
+            var station = _scooterList.Find(list => list.Name == stationName);
+            
+            if (station != null) 
+                return Task.FromResult(station.BikesAvailable);
+            
+            Console.WriteLine($"Station not found: {stationName}");
+            return null;
         }
     }
 }
