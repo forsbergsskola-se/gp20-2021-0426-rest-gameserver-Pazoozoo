@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace LameScooter
 {
@@ -15,9 +14,5 @@ namespace LameScooter
             
             Console.WriteLine("Number of Scooters Available at this Station: "); // Add the count that is returned above to the output.
         }
-    }
-
-    public interface ILameScooterRental {
-        Task<int> GetScooterCountInStation(string stationName);
     }
 }
