@@ -1,25 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
-public class Program {
-
-    static string FindTextBetweenTags(string original, string start, string end) {
-        throw new NotImplementedException();
-    }
-    
-    static void Main(string[] arguments) {
-        var host = "acme.com";
-        var uri = "/";
-        // Here, acme.com is only used for DNS-Resolving and gives us an IP
-        var tcpClient = new TcpClient(host, 80);
-        var stream = tcpClient.GetStream();
-        var streamWriter = new StreamWriter(stream, Encoding.ASCII);
-        // Here, acme.com is passed to the Webserver at the IP, so it knows, which website to give us
-        // In case, that one computer hosts multiple websites (think of Web-Hosts like wix.com)
+namespace TinyBrowser {
+    public class Program {
+        static void Main(string[] arguments) {
+            var host = "acme.com";
+            var uri = "/";
+            // Here, acme.com is only used for DNS-Resolving and gives us an IP
+            var tcpClient = new TcpClient(host, 80);
+            var stream = tcpClient.GetStream();
+            var streamWriter = new StreamWriter(stream, Encoding.ASCII);
+            // Here, acme.com is passed to the Webserver at the IP, so it knows, which website to give us
+            // In case, that one computer hosts multiple websites (think of Web-Hosts like wix.com)
         
-        /*
+            /*
          * GET / HTTP.1.1
          * Host: acme.com
          * Content-Length: 7
@@ -27,35 +25,72 @@ public class Program {
          * abcdefg
          */
         
-        // This is a valid HTTP/1.1-Request to send:
-        var request = $"GET {uri} HTTP/1.1\r\nHost: {host}\r\n\r\n";
-        streamWriter.Write(request); // add data to the buffer
-        streamWriter.Flush(); // actually send the buffered data
+            // This is a valid HTTP/1.1-Request to send:
+            var request = $"GET {uri} HTTP/1.1\r\nHost: {host}\r\n\r\n";
+            streamWriter.Write(request); // add data to the buffer
+            streamWriter.Flush(); // actually send the buffered data
 
-        var streamReader = new StreamReader(stream);
-        var response = streamReader.ReadToEnd();
+            var streamReader = new StreamReader(stream);
+            var response = streamReader.ReadToEnd();
 
-        var uriBuilder = new UriBuilder(null, host);
-        uriBuilder.Path = uri;
-        Console.WriteLine($"Opened {uriBuilder}");
-        // ======= FindTextBetweenTags Function START ========
-        var titleTag = "<title>";
-        // Find the start of the <title>-Tag
-        var titleIndex = response.IndexOf(titleTag);
-        string title = string.Empty;
-        if (titleIndex != -1) {
-            // Offset the index by the length of the <title>-Tag, to ommit it
-            titleIndex += titleTag.Length;
-            // Find the start of the </title>-End-Tag
-            var titleEndIndex = response.IndexOf("</title>");
-            if (titleEndIndex > titleIndex) {
-                // Get the string in between both
-                title = response[titleIndex..titleEndIndex];
+            var uriBuilder = new UriBuilder(null, host);
+            uriBuilder.Path = uri;
+            Console.WriteLine($"Opened {uriBuilder}");
+
+            var titleText = FindTextBetweenTags(response, "title");
+            Console.WriteLine("Title: " + titleText);
+            // Console.WriteLine("response: " + response);
+
+            var hrefLinks = GetTextBetweenStringsFromString(response, "<a href=\"", "\">");
+            var hrefLinkList = hrefLinks.ToList();
+            var hrefDescriptionList = new List<string>();
+
+            for (var i = 0; i < hrefLinkList.Count; i++) {
+                var description = GetTextBetweenStringsFromString(response, hrefLinkList[i] + "\">", "</a>");
+                hrefDescriptionList.AddRange(description);
+                
+                Console.WriteLine($"{i}: {hrefDescriptionList[i]} ({hrefLinkList[i]})");
             }
         }
-        // ======= FindTextBetweenTags Function END ========
-        Console.WriteLine("Title: "+title);
+        
+        static string FindTextBetweenTags(string original, string tag) {
+            var startTag = $"<{tag}>";
+            // Find the start of the <tag>
+            var tagIndex = original.IndexOf(startTag);
+            string result = string.Empty;
+            if (tagIndex != -1) {
+                // Offset the index by the length of the <tag>, to omit it
+                tagIndex += startTag.Length;
+                // Find the start of the </tag>-End
+                var tagEndIndex = original.IndexOf($"</{tag}>");
+                if (tagEndIndex > tagIndex) {
+                    // Get the string in between both
+                    result = original[tagIndex..tagEndIndex];
+                }
+            }
+            return result;
+        }
+    
+        static IEnumerable<string> GetTextBetweenStringsFromString(string text, string start, string end) {
+            int currentIndex = 0;
+            while (true) {
+                var startIndex = text.IndexOf(start, currentIndex);
+                if (startIndex == -1)
+                    yield break;
+                var endIndex = text.IndexOf(end, startIndex);
+                if (endIndex == -1)
+                    yield break;
 
-        var titleText = FindTextBetweenTags(response, "<title>", "</title>");
+                yield return text[(startIndex + start.Length)..endIndex];
+                currentIndex = endIndex;
+            }
+        }
+    }
+
+// Extension Method
+    public static class StringExtensions {
+        public static string FindTextBetweenTags(this string original, string start, string end) {
+            throw new NotImplementedException();
+        }
     }
 }
