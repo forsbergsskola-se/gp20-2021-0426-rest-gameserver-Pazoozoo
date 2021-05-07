@@ -5,8 +5,8 @@ namespace LameScooter {
     public class LameScooterStationList {
         public string Id { get; set; }
         public string Name { get; set; }
-        public double X { get; set; }
-        public double Y { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
         public int BikesAvailable { get; set; }
         public int SpacesAvailable { get; set; }
         public int Capacity { get; set; }
