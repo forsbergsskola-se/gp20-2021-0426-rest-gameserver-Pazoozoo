@@ -24,9 +24,8 @@ namespace LameScooter {
         }
         
         public Task<int> GetScooterCountInStation(string stationName) {
-
             if (stationName.Any(char.IsDigit)) 
-                throw new ArgumentException($"<{stationName}> contains a digit");
+                throw new ArgumentException($"{stationName} contains a digit");
 
             var station = _scooterList.Find(list => list.Name == stationName);
             
