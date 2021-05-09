@@ -26,15 +26,14 @@ namespace LameScooter {
         public Task<int> GetScooterCountInStation(string stationName) {
 
             if (stationName.Any(char.IsDigit)) 
-                throw new ArgumentException($"Invalid input: <{stationName}> contains a digit");
+                throw new ArgumentException($"<{stationName}> contains a digit");
 
             var station = _scooterList.Find(list => list.Name == stationName);
             
             if (station != null) 
                 return Task.FromResult(station.BikesAvailable);
-            
-            Console.WriteLine($"Station not found: {stationName}");
-            return null;
+
+            throw new NotFoundException($"{stationName} not found.");
         }
     }
 }
