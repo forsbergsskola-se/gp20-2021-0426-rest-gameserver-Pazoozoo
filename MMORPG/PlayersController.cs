@@ -3,6 +3,10 @@ using System.Threading.Tasks;
 
 namespace MMORPG {
     public class PlayersController {
+        IRepository _repository;
+        public PlayersController(IRepository repository) {
+            _repository = repository;
+        }
         public Task<Player> Get(Guid id) {
             throw new NotImplementedException();
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -23,6 +24,10 @@ namespace LameScooter {
         }
         
         public Task<int> GetScooterCountInStation(string stationName) {
+
+            if (stationName.Any(char.IsDigit)) 
+                throw new ArgumentException($"Invalid input: <{stationName}> contains a digit");
+
             var station = _scooterList.Find(list => list.Name == stationName);
             
             if (station != null) 
