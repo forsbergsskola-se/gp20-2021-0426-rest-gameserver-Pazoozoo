@@ -11,33 +11,61 @@ namespace GitHubExplorer {
         static readonly HttpClient Client = new HttpClient();
         static string _userName;
         static async Task Main(string[] args) {
-            
+            SetDefaultRequestHeaders();
+
             while (true) {
                 Console.WriteLine("Enter GitHub UserID:");
                 _userName = Console.ReadLine();
-                if (_userName != null) break;
-                Console.WriteLine("No input received.\n");
+                var user = await FetchUser(_userName);
+                if (user != null) break;
+                Console.WriteLine("Try again...\n");
             }
             
-            
-            Console.WriteLine("Choose REST API:");
-            Console.WriteLine("0: GitHub");
-            // var userInput = int.Parse(Console.ReadLine());
+            Console.WriteLine("User found...\n");
+            bool validInput = false;
+            int action = 0;
 
-            switch (0) {
+            while (!validInput) {
+                Console.WriteLine("Choose Action:");
+                Console.WriteLine("0: Profile");
+                Console.WriteLine("1: Repositories");
+                Console.WriteLine("2: Organizations");
+                Console.WriteLine("3: Quit application");
+                const int availableActions = 4;
+                var userInput = Console.ReadLine();
+                validInput = int.TryParse(userInput, out int number) && number < availableActions;
+                action = number;
+            }
+
+            switch (action) {
                 case 0:
-                    Console.WriteLine("GitHub API");
+                    Console.WriteLine("Profile TODO");
+                    break;
+                case 1:
+                    Console.WriteLine("Loading repositories...");
                     await GitHubRepositories();
                     break;
+                case 2:
+                    Console.WriteLine("Profile TODO");
+                    break;
+                case 3:
+                    Console.WriteLine("Quit TODO");
+                    break;
                 default:
-                    Console.WriteLine("No API found");
+                    Console.WriteLine("Invalid input");
                     break;
             }
         }
 
+        static void SetDefaultRequestHeaders() {
+            Client.DefaultRequestHeaders.Clear();
+            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+            Client.DefaultRequestHeaders.Add("User-Agent", "GitHub Finder");
+        }
+
         static async Task GitHubRepositories() {
-            var repos = await FetchRepositories();
-            if (repos.Count == 0) 
+            var repos = await FetchRepositories(_userName);
+            if (repos == null) 
                 return;
             Console.WriteLine("Repos:\n");
             foreach (var repo in repos) {
@@ -50,20 +78,26 @@ namespace GitHubExplorer {
             }
         }
 
-        static async Task<List<Repository>> FetchRepositories() {
-            Client.DefaultRequestHeaders.Clear();
-            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-            Client.DefaultRequestHeaders.Add("User-Agent", "GitHub Repository Finder");
-            var repos = new List<Repository>();
-            
+        static async Task<List<Repository>> FetchRepositories(string user) {
             try {
-                var streamTask = Client.GetStreamAsync($"https://api.github.com/users/{_userName}/repos");
-                repos = await JsonSerializer.DeserializeAsync<List<Repository>>(await streamTask);
+                var streamTask = Client.GetStreamAsync($"https://api.github.com/users/{user}/repos");
+                return await JsonSerializer.DeserializeAsync<List<Repository>>(await streamTask);
             }
             catch (HttpRequestException e) {
                 Console.WriteLine("User not found... Error message: " + e.Message);
+                return null;
             }
-            return repos;
+        }
+        
+        static async Task<User> FetchUser(string user) {
+            try {
+                var streamTask = Client.GetStreamAsync($"https://api.github.com/users/{user}");
+                return await JsonSerializer.DeserializeAsync<User>(await streamTask);
+            }
+            catch (HttpRequestException e) {
+                Console.WriteLine("User not found... Error message: " + e.Message);
+                return null;
+            }
         }
     }
 }
