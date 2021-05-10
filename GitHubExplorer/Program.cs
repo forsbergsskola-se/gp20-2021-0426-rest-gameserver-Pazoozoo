@@ -64,6 +64,17 @@ namespace GitHubExplorer {
             Client.DefaultRequestHeaders.Add("User-Agent", "GitHub Finder");
         }
 
+        static async Task<T> Find<T>(string requestUri) {
+            try {
+                var streamTask = Client.GetStreamAsync(requestUri);
+                return await JsonSerializer.DeserializeAsync<T>(await streamTask);
+            }
+            catch (HttpRequestException e) {
+                Console.WriteLine("User not found... Error message: " + e.Message);
+                return default;
+            }
+        }
+        
         static async Task PrintRepositories() {
             var repos = await Find<List<Repository>>(UserUri + "/repos");
             if (repos == null) 
@@ -76,17 +87,6 @@ namespace GitHubExplorer {
                 Console.WriteLine($"HomePage: {repo.Homepage}");
                 Console.WriteLine($"Watchers: {repo.Watchers}");
                 Console.WriteLine($"Last Push: {repo.LastPush}\n");
-            }
-        }
-        
-        static async Task<T> Find<T>(string requestUri) {
-            try {
-                var streamTask = Client.GetStreamAsync(requestUri);
-                return await JsonSerializer.DeserializeAsync<T>(await streamTask);
-            }
-            catch (HttpRequestException e) {
-                Console.WriteLine("User not found... Error message: " + e.Message);
-                return default;
             }
         }
     }
