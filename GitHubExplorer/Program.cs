@@ -24,37 +24,43 @@ namespace GitHubExplorer {
             
             Console.WriteLine("User found...\n");
             bool validInput = false;
+            bool browsing = true;
             int action = 0;
 
-            while (!validInput) {
-                Console.WriteLine("Choose Action:\n");
-                Console.WriteLine("0: Profile");
-                Console.WriteLine("1: Repositories");
-                Console.WriteLine("2: Organizations");
-                Console.WriteLine("3: Quit application");
-                const int availableActions = 4;
-                var userInput = Console.ReadLine();
-                validInput = int.TryParse(userInput, out int number) && number < availableActions;
-                action = number;
-            }
+            while (browsing) {
+                while (!validInput) {
+                    Console.WriteLine("Choose Action:");
+                    Console.WriteLine("0: Profile");
+                    Console.WriteLine("1: Repositories");
+                    Console.WriteLine("2: Organizations");
+                    Console.WriteLine("3: Quit application");
+                    const int availableActions = 4;
+                    var userInput = Console.ReadLine();
+                    validInput = int.TryParse(userInput, out int number) && number < availableActions;
+                    action = number;
+                }
 
-            switch (action) {
-                case 0:
-                    Console.WriteLine("Profile TODO");
-                    break;
-                case 1:
-                    Console.WriteLine("Loading repositories...\n");
-                    await PrintRepositories();
-                    break;
-                case 2:
-                    Console.WriteLine("Profile TODO");
-                    break;
-                case 3:
-                    Console.WriteLine("Quit TODO");
-                    break;
-                default:
-                    Console.WriteLine("Invalid input");
-                    break;
+                switch (action) {
+                    case 0:
+                        Console.WriteLine("Profile TODO");
+                        break;
+                    case 1:
+                        Console.WriteLine("Loading repositories...\n");
+                        await PrintRepositories();
+                        break;
+                    case 2:
+                        Console.WriteLine("Profile TODO");
+                        break;
+                    case 3:
+                        Console.WriteLine("Quitting application...");
+                        browsing = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid input");
+                        break;
+                }
+                
+                validInput = false;
             }
         }
 
