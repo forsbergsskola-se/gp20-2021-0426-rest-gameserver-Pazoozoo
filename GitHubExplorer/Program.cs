@@ -85,7 +85,7 @@ namespace GitHubExplorer {
             var repos = await Find<List<Repository>>(UserUri + "/repos");
             if (repos == null) 
                 return;
-            Console.WriteLine("Repos:\n");
+            Console.WriteLine($"Repositories of {_userName}:\n");
             foreach (var repo in repos) {
                 Console.WriteLine($"Name: {repo.Name}");
                 Console.WriteLine($"Description: {repo.Description}");
@@ -94,6 +94,7 @@ namespace GitHubExplorer {
                 Console.WriteLine($"Watchers: {repo.Watchers}");
                 Console.WriteLine($"Last Push: {repo.LastPush}\n");
             }
+            Console.WriteLine("========================================\n");
         }
     }
 }
