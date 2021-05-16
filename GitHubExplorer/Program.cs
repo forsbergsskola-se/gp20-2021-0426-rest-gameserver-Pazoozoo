@@ -14,15 +14,8 @@ namespace GitHubExplorer {
         static async Task Main(string[] args) {
             SetDefaultRequestHeaders();
 
-            while (true) {
-                Console.WriteLine("Enter GitHub UserID:");
-                _userName = Console.ReadLine();
-                var user = await Find<User>(UserUri);
-                if (user != null) break;
-                Console.WriteLine("Try again...\n");
-            }
+            await GetUserName();
 
-            Console.WriteLine("User found...\n");
             bool validInput = false;
             bool browsing = true;
             int action = 0;
@@ -33,8 +26,9 @@ namespace GitHubExplorer {
                     Console.WriteLine("0: Profile");
                     Console.WriteLine("1: Repositories");
                     Console.WriteLine("2: Organizations");
-                    Console.WriteLine("3: Quit application");
-                    const int availableActions = 4;
+                    Console.WriteLine("3: Enter new username");
+                    Console.WriteLine("4: Quit application");
+                    const int availableActions = 5;
                     var userInput = Console.ReadLine();
                     validInput = int.TryParse(userInput, out int number) && number < availableActions;
                     action = number;
@@ -54,6 +48,9 @@ namespace GitHubExplorer {
                         await PrintOrganizations();
                         break;
                     case 3:
+                        await GetUserName();
+                        break;
+                    case 4:
                         Console.WriteLine("\nQuitting application...\n");
                         browsing = false;
                         break;
@@ -64,6 +61,23 @@ namespace GitHubExplorer {
 
                 Console.WriteLine("========================================\n");
                 validInput = false;
+            }
+        }
+
+        static async Task GetUserName() {
+            while (true) {
+                Console.WriteLine("Enter GitHub Username:");
+                _userName = Console.ReadLine();
+                if (_userName == "") {
+                    Console.WriteLine("No username provided.\n");
+                    break;
+                }
+                var user = await Find<User>(UserUri);
+                if (user != null) {
+                    Console.WriteLine("User found...\n");
+                    break;
+                }
+                Console.WriteLine("Try again...\n");
             }
         }
 
@@ -80,7 +94,7 @@ namespace GitHubExplorer {
                 return await JsonSerializer.DeserializeAsync<T>(await streamTask);
             }
             catch (HttpRequestException e) {
-                Console.WriteLine("User not found... Error message: " + e.Message);
+                Console.WriteLine($"User not found... \nError message: {e.Message}\n");
                 return default;
             }
         }
