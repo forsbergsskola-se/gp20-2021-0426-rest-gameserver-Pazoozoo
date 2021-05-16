@@ -50,7 +50,8 @@ namespace GitHubExplorer {
                         await PrintRepositories();
                         break;
                     case 2:
-                        Console.WriteLine("Org TODO");
+                        Console.WriteLine("Loading organizations...\n");
+                        await PrintOrganizations();
                         break;
                     case 3:
                         Console.WriteLine("\nQuitting application...\n");
@@ -93,12 +94,22 @@ namespace GitHubExplorer {
             Console.WriteLine($"Name: {user.Name}");
             Console.WriteLine($"Company: {user.Company}\n");
         }
+        static async Task PrintOrganizations() {
+            var orgs = await Find<List<Organization>>(UserUri + "/orgs");
+            if (orgs == null)
+                return;
+            foreach (var org in orgs) {
+                Console.WriteLine($"Name: {org.Name}");
+                Console.WriteLine($"ID: {org.Id}");
+                Console.WriteLine($"URL: {org.Url}");
+                Console.WriteLine($"Description: {org.Description}\n");
+            }
+        }
 
         static async Task PrintRepositories() {
             var repos = await Find<List<Repository>>(UserUri + "/repos");
             if (repos == null) 
-                return;
-            Console.WriteLine($"Repositories of {_userName}:\n");
+                return;;
             foreach (var repo in repos) {
                 Console.WriteLine($"Name: {repo.Name}");
                 Console.WriteLine($"Description: {repo.Description}");
