@@ -10,8 +10,8 @@ namespace GitHubExplorer {
         static readonly HttpClient Client = new HttpClient();
         static string _userName;
         static string UserUri => $"https://api.github.com/users/{_userName}";
-        
-            static async Task Main(string[] args) {
+
+        static async Task Main(string[] args) {
             SetDefaultRequestHeaders();
 
             while (true) {
@@ -21,7 +21,7 @@ namespace GitHubExplorer {
                 if (user != null) break;
                 Console.WriteLine("Try again...\n");
             }
-            
+
             Console.WriteLine("User found...\n");
             bool validInput = false;
             bool browsing = true;
@@ -42,31 +42,34 @@ namespace GitHubExplorer {
 
                 switch (action) {
                     case 0:
-                        Console.WriteLine("Profile TODO");
+                        Console.WriteLine("Loading profile...\n");
+                        await PrintUser();
                         break;
                     case 1:
                         Console.WriteLine("Loading repositories...\n");
                         await PrintRepositories();
                         break;
                     case 2:
-                        Console.WriteLine("Profile TODO");
+                        Console.WriteLine("Org TODO");
                         break;
                     case 3:
-                        Console.WriteLine("Quitting application...");
+                        Console.WriteLine("\nQuitting application...\n");
                         browsing = false;
                         break;
                     default:
                         Console.WriteLine("Invalid input");
                         break;
                 }
-                
+
+                Console.WriteLine("========================================\n");
                 validInput = false;
             }
         }
 
         static void SetDefaultRequestHeaders() {
             Client.DefaultRequestHeaders.Clear();
-            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+            Client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
             Client.DefaultRequestHeaders.Add("User-Agent", "GitHub Finder");
         }
 
@@ -80,7 +83,17 @@ namespace GitHubExplorer {
                 return default;
             }
         }
-        
+
+        static async Task PrintUser() {
+            var user = await Find<User>(UserUri);
+            if (user == null)
+                return;
+            Console.WriteLine($"Username: {user.UserName}");
+            Console.WriteLine($"User ID: {user.UserId}");
+            Console.WriteLine($"Name: {user.Name}");
+            Console.WriteLine($"Company: {user.Company}\n");
+        }
+
         static async Task PrintRepositories() {
             var repos = await Find<List<Repository>>(UserUri + "/repos");
             if (repos == null) 
@@ -94,7 +107,6 @@ namespace GitHubExplorer {
                 Console.WriteLine($"Watchers: {repo.Watchers}");
                 Console.WriteLine($"Last Push: {repo.LastPush}\n");
             }
-            Console.WriteLine("========================================\n");
         }
     }
 }
