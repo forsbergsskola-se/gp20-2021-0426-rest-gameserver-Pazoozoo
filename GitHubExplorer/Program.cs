@@ -12,14 +12,13 @@ namespace GitHubExplorer {
         static string UserUri => $"https://api.github.com/users/{_userName}";
 
         static async Task Main(string[] args) {
-            SetDefaultRequestHeaders();
-
-            await GetUserName();
-
             bool validInput = false;
             bool browsing = true;
             int action = 0;
-
+            
+            SetDefaultRequestHeaders();
+            await GetUserName();
+            
             while (browsing) {
                 while (!validInput) {
                     Console.WriteLine("Choose Action:");
@@ -108,6 +107,7 @@ namespace GitHubExplorer {
             Console.WriteLine($"Name: {user.Name}");
             Console.WriteLine($"Company: {user.Company}\n");
         }
+        
         static async Task PrintOrganizations() {
             var orgs = await Find<List<Organization>>(UserUri + "/orgs");
             if (orgs == null)
