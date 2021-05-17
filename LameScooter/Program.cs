@@ -23,8 +23,8 @@ namespace LameScooter
             }
 
             try {
-                Console.WriteLine($"Number of Scooters Available at {args[0]} Station: " +
-                                  $"{rental.GetScooterCountInStation(args[0]).Result}");
+                Console.WriteLine($"Number of Scooters Available at {station} Station: " +
+                                  $"{rental.GetScooterCountInStation(station).Result}");
             }
             catch (ArgumentException e) {
                 Console.WriteLine($"Error: {e.Message}");
