@@ -1,32 +1,26 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LameScooter {
     public class RealTimeLameScooterRental : ILameScooterRental {
-        List<LameScooterStationList> _scooterList;
+        ScooterStations _scooterStations;
         static readonly HttpClient client = new HttpClient();
 
         public async Task GetScooterDatabase(string uri) {
-            Console.WriteLine($"Loading from: {uri}");
-            List<LameScooterStationList> list = null;
+            Console.WriteLine($"Loading JSON data from: {uri}");
+            
             try {
                 var options = new JsonSerializerOptions {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 };
-                list = await client.GetFromJsonAsync<List<LameScooterStationList>>(uri, options);
+                var jsonString = await client.GetStringAsync(uri);
+                _scooterStations = JsonSerializer.Deserialize<ScooterStations>(jsonString, options);
             }
             catch (HttpRequestException e) {
-                Console.WriteLine($"Error: {e.Message}");
-            }
-
-            if (list == null) {
-                Console.WriteLine("list is null");
+                Console.WriteLine($"Error message: {e.Message}");
             }
         }
 
@@ -34,7 +28,10 @@ namespace LameScooter {
             if (stationName.Any(char.IsDigit)) 
                 throw new ArgumentException($"{stationName} contains a digit.");
 
-            var station = _scooterList.Find(list => list.Name == stationName);
+            if (_scooterStations == null) 
+                throw new ArgumentException($"Could not find JSON data with provided uri.");
+            
+            var station = _scooterStations.Stations.Find(list => list.Name == stationName);
             
             if (station != null) 
                 return Task.FromResult(station.BikesAvailable);
