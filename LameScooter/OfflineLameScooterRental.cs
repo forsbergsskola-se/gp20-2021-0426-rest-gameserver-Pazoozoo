@@ -9,7 +9,7 @@ namespace LameScooter {
     public class OfflineLameScooterRental : ILameScooterRental {
         List<LameScooterStationList> _scooterList;
 
-        public OfflineLameScooterRental(string uri) {
+        public async Task GetScooterDatabase(string uri) {
             if (!File.Exists(uri)) {
                 Console.Write($"File not found in path: {uri}");
                 return;
@@ -22,7 +22,7 @@ namespace LameScooter {
             var jsonString = File.ReadAllText(uri);
             _scooterList = JsonSerializer.Deserialize<List<LameScooterStationList>>(jsonString, options);
         }
-        
+
         public Task<int> GetScooterCountInStation(string stationName) {
             if (stationName.Any(char.IsDigit)) 
                 throw new ArgumentException($"{stationName} contains a digit.");

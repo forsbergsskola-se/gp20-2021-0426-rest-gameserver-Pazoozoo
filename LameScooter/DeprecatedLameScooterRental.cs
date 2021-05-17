@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 namespace LameScooter {
     public class DeprecatedLameScooterRental : ILameScooterRental {
         Dictionary<string, int> _scooterDictionary;
-        public DeprecatedLameScooterRental(string uri) {
+
+        public async Task GetScooterDatabase(string uri) {
             if (!File.Exists(uri)) {
                 Console.Write($"File not found in path: {uri}");
                 return;
             }
-            ReadFile(uri);
-        }
-
-        void ReadFile(string uri) {
+            
             _scooterDictionary = new Dictionary<string, int>();
             
             using var streamReader = new StreamReader(uri);
@@ -29,7 +27,7 @@ namespace LameScooter {
                 _scooterDictionary[station] = bikesAvailable;
             }
         }
-        
+
         public Task<int> GetScooterCountInStation(string stationName) {
             if (stationName.Any(char.IsDigit)) 
                 throw new ArgumentException($"{stationName} contains a digit.");
