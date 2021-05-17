@@ -123,7 +123,7 @@ namespace GitHubExplorer {
         static async Task PrintRepositories() {
             var repos = await Find<List<Repository>>(UserUri + "/repos");
             if (repos == null) 
-                return;;
+                return;
             foreach (var repo in repos) {
                 Console.WriteLine($"Name: {repo.Name}");
                 Console.WriteLine($"Description: {repo.Description}");
