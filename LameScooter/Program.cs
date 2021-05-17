@@ -17,6 +17,10 @@ namespace LameScooter
                 case "deprecated":
                     rental = new DeprecatedLameScooterRental("scooters.txt");
                     break;
+                case "realtime":
+                    rental = new RealTimeLameScooterRental(
+                        "https://raw.githubusercontent.com/marczaku/GP20-2021-0426-Rest-Gameserver/main/assignments/scooters.json");
+                    break;
                 default:
                     rental = new OfflineLameScooterRental("scooters.json");
                     break;
