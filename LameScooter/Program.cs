@@ -37,10 +37,10 @@ namespace LameScooter
                                   $"{rental.GetScooterCountInStation(station).Result}");
             }
             catch (ArgumentException e) {
-                Console.WriteLine($"Error: {e.Message}");
+                Console.WriteLine($"Error message: {e.Message}");
             }
             catch (NotFoundException e) {
-                Console.WriteLine($"Error: {e.Message}");
+                Console.WriteLine($"Error message: {e.Message}");
             }
         }
     }
