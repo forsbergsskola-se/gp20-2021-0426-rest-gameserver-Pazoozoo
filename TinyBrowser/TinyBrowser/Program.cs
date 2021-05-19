@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using static System.Int32;
 
 namespace TinyBrowser {
     public class Program {
@@ -48,8 +49,17 @@ namespace TinyBrowser {
             for (var i = 0; i < hrefLinkList.Count; i++) {
                 var description = GetTextBetweenStringsFromString(response, hrefLinkList[i] + "\">", "</a>");
                 hrefDescriptionList.AddRange(description);
-                
+
                 Console.WriteLine($"{i}: {hrefDescriptionList[i]} ({hrefLinkList[i]})");
+            }
+            
+            var number = 0;
+            while (true) {
+                Console.WriteLine($"Enter a number between 0-{hrefLinkList.Count - 1}:");
+                var input = TryParse(Console.ReadLine(), out number);
+                if (!input || number < 0 || number > hrefLinkList.Count - 1) 
+                    continue;
+                break;
             }
         }
         
