@@ -1,9 +1,7 @@
 using System;
 
-namespace MMORPG
-{
-    public class WeatherForecast
-    {
+namespace MMORPG {
+    public class WeatherForecast {
         public DateTime Date { get; set; }
 
         public int TemperatureC { get; set; }

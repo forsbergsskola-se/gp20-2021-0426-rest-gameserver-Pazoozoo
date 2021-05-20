@@ -1,8 +1,7 @@
 using System;
 
 namespace MMORPG {
-    public class Player
-    {
+    public class Player {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int Score { get; set; }
